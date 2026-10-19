@@ -1,8 +1,8 @@
 {
   "name": "grok",
   "displayName": "Grok Bot",
-  "version": "1.2.0",
-  "description": "Chiama i bot Grok Bot di Federico da Claude Cowork (e Claude Code): /grok:network, /grok:piano-rilancio, /grok:risposte e gli altri. Scrive in richieste.md del repo grok-claude-hub e avvisa il bot via webhook, tramite un connettore locale che gira sul PC Windows.",
+  "version": "1.3.0",
+  "description": "Chiama i bot Grok Bot di Federico da Claude Cowork (e Claude Code): /grok:network, /grok:piano-rilancio, /grok:raimondo, /grok:risposte e gli altri. Scrive in richieste.md del repo grok-claude-hub e avvisa il bot via webhook, tramite un connettore locale che gira sul PC Windows.",
   "author": { "name": "Federico Morello" },
   "license": "UNLICENSED"
 }

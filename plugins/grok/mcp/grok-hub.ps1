@@ -27,7 +27,50 @@ $Out = New-Object System.IO.StreamWriter([Console]::OpenStandardOutput(), $Utf8)
 $Out.AutoFlush = $true
 $Out.NewLine = "`n"
 $File = 'richieste.md'
-$Bots = @('@grok-bot','@piano-rilancio','@network','@ricercatore','@copywriter','@marketer','@developer','@home-assistant','@vendite-usato','@nutrizionista')
+# Bot Grok Bot di Federico: @nome -> nome completo e id del bot (stesso elenco di HANDOFF.md).
+$BotInfo = [ordered]@{
+  '@grok-bot'         = 'Grok Bot (bot principale, smista agli altri)'
+  '@raimondo'         = 'Il Piccolo Raimondo Vianello (06a5fd94-0f1b-4adf-9f70-9e5ea4c8d10b)'
+  '@home-assistant'   = 'Home Assistant (157d574f-708e-4be2-bfef-58d8a82d7d98)'
+  '@vendite-usato'    = 'Vendite usato (1e613545-1234-4958-baa0-086c212d8ae6)'
+  '@network'          = 'Network (218a3662-475f-4d67-81d3-2f0cb597ad1b)'
+  '@ricercatore'      = 'Ricercatore (4f25004a-1c42-4555-9dfc-745fe006918c)'
+  '@nutrizionista'    = 'Nutrizionista e Personal Trainer (5a55c253-a128-485f-9d26-201462b612a1)'
+  '@developer'        = 'Developer (7fbe8645-18ae-4caf-aa0c-47b77bd5b59d)'
+  '@competitor-watch' = 'Competitor Watch (839295bb-e559-4e80-9f82-3693bc641489)'
+  '@copywriter'       = 'Copywriter (8ff50101-2616-4189-bb05-72b48be07c00)'
+  '@caso-carplay'     = 'Caso CarPlay (b41290d8-9866-415a-8c1e-82dfdef6a6e4)'
+  '@projects-manager' = 'Projects Manager (b591164b-0284-4c17-9b3b-0c87af2e4dec)'
+  '@marketer'         = 'Marketer (c61d6edf-419d-4e55-92be-c24f041bbd66)'
+  '@piano-rilancio'   = 'Piano rilancio (e8c08ae2-054f-49e1-979a-6ba817d0c2a0)'
+}
+$Bots = @($BotInfo.Keys)
+# Alias (minuscolo, senza @): nomi completi e varianti comuni.
+$Alias = @{
+  'grok' = '@grok-bot'; 'grok bot' = '@grok-bot'; 'bot' = '@grok-bot'
+  'raimondo' = '@raimondo'; 'il piccolo raimondo vianello' = '@raimondo'; 'piccolo raimondo vianello' = '@raimondo'; 'raimondo vianello' = '@raimondo'; 'il piccolo raimondo' = '@raimondo'
+  'home assistant' = '@home-assistant'; 'vendite usato' = '@vendite-usato'; 'vendite' = '@vendite-usato'
+  'nutrizionista e personal trainer' = '@nutrizionista'; 'personal trainer' = '@nutrizionista'
+  'competitor watch' = '@competitor-watch'; 'competitor' = '@competitor-watch'
+  'caso carplay' = '@caso-carplay'; 'carplay' = '@caso-carplay'
+  'projects manager' = '@projects-manager'; 'project manager' = '@projects-manager'
+  'piano rilancio' = '@piano-rilancio'; 'rilancio' = '@piano-rilancio'
+}
+$ElencoBot = ($BotInfo.GetEnumerator() | ForEach-Object { "$($_.Key) = $($_.Value)" }) -join '; '
+
+# Risolve il destinatario: @nome noto, alias, oppure nome sconosciuto -> @grok-bot che lo smista.
+# Restituisce @{ per = '@...'; inoltro = '<nome originale>' o $null }.
+function Resolve-Bot([string]$Nome) {
+  $n = ([string]$Nome).Trim()
+  if (-not $n) { return $null }
+  $k = $n.ToLowerInvariant().TrimStart('@').Trim()
+  if ($Bots -contains "@$k") { return @{ per = "@$k"; inoltro = $null } }
+  $k2 = ($k -replace '[-_]+', ' ' -replace '\s+', ' ').Trim()
+  if ($Alias.ContainsKey($k2)) { return @{ per = $Alias[$k2]; inoltro = $null } }
+  $k3 = ($k2 -replace ' ', '-')
+  if ($Bots -contains "@$k3") { return @{ per = "@$k3"; inoltro = $null } }
+  return @{ per = '@grok-bot'; inoltro = $n.TrimStart('@') }
+}
 $Versioni = @('2024-11-05','2025-03-26','2025-06-18')
 $GitTimeoutMs = 180000
 $AttesaS = 50; try { $w = [int](Get-EnvValueEarly 'GROK_HUB_WAIT_S'); if ($w -gt 0) { $AttesaS = $w } } catch {}
@@ -203,12 +246,12 @@ function Get-OneLine([string]$S, [int]$Max) {
 
 function Invoke-GrokInvia($a) {
   $scad = [DateTime]::UtcNow.AddSeconds($AttesaS)
-  $per = ([string]$a.per).Trim().ToLowerInvariant(); $testo = [string]$a.testo
-  if (-not $per) { throw "Manca il destinatario. Validi: $($Bots -join ', ')" }
-  if (-not $per.StartsWith('@')) { $per = '@' + $per }
-  if ($Bots -notcontains $per) { throw "Destinatario sconosciuto: $per. Validi: $($Bots -join ', ')" }
-  $testo = $testo.Trim()
+  $r = Resolve-Bot ([string]$a.per); $testo = ([string]$a.testo).Trim()
+  if ($null -eq $r) { throw "Manca il destinatario. Bot: $ElencoBot" }
+  $per = $r.per
   if (-not $testo) { throw 'Testo della richiesta vuoto.' }
+  # Nome non in elenco: la richiesta va a Grok Bot, che la smista al bot giusto.
+  if ($r.inoltro) { $testo = "Per: $($r.inoltro) (smista tu al bot giusto)`n$testo" }
   Test-Git
   $dir = Get-RepoDir
   $path = Join-Path $dir $File
@@ -254,9 +297,9 @@ function Invoke-GrokInvia($a) {
 
 function Invoke-GrokAttendi($a) {
   $scad = [DateTime]::UtcNow.AddSeconds($AttesaS)
-  $per = ([string]$a.per).Trim().ToLowerInvariant(); if ($per -and -not $per.StartsWith('@')) { $per = '@' + $per }
+  $r = Resolve-Bot ([string]$a.per); if ($null -eq $r) { throw "Manca il destinatario. Bot: $ElencoBot" }
+  $per = $r.per
   $ora = ([string]$a.ora).Trim()
-  if ($Bots -notcontains $per) { throw "Destinatario sconosciuto: $per. Validi: $($Bots -join ', ')" }
   if ($ora -notmatch '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$') { throw "ora deve essere nel formato AAAA-MM-GG HH:MM, come nel titolo della richiesta (era: '$ora')." }
   Test-Git
   $dir = Get-RepoDir
@@ -283,7 +326,7 @@ $Tools = @(
      description = 'Manda una richiesta a un bot Grok Bot di Federico: la aggiunge in fondo a richieste.md del repo grok-claude-hub (ora di Roma), fa commit e push, avvisa il bot via webhook e aspetta la risposta (fino a ~50 s). Se la risposta arriva la restituisce: riportala a Federico così com''è. Se non è ancora arrivata, chiama grok_attendi finché arriva.'
      inputSchema = @{ type = 'object'
        properties = @{
-         per = @{ type = 'string'; enum = $Bots; description = 'Bot destinatario' }
+         per = @{ type = 'string'; description = "Bot destinatario: @nome oppure nome completo o alias (es. raimondo, il piccolo raimondo vianello). Bot: $ElencoBot. Un nome non in elenco va comunque inviato: arriva a @grok-bot che lo smista. Non rifiutare mai un nome." }
          testo = @{ type = 'string'; description = 'Testo della richiesta, così come lo ha scritto Federico' }
          file = @{ type = 'string'; description = 'Facoltativo: percorso di un file del repo citato nella richiesta' }
          argomento = @{ type = 'string'; description = 'Facoltativo: argomento in poche parole, per il messaggio di commit' } }
@@ -292,14 +335,14 @@ $Tools = @(
      description = 'Aspetta ancora (fino a ~50 s, git pull ogni 10 s) la risposta di un bot a una richiesta già mandata con grok_invia. Chiamalo di nuovo finché la risposta arriva, poi riportala a Federico così com''è. Non chiedere mai a Federico di controllare lui.'
      inputSchema = @{ type = 'object'
        properties = @{
-         per = @{ type = 'string'; enum = $Bots; description = 'Bot a cui è stata mandata la richiesta' }
+         per = @{ type = 'string'; description = 'Bot restituito da grok_invia (lo stesso @nome del titolo della richiesta)' }
          ora = @{ type = 'string'; description = 'Data e ora della richiesta, AAAA-MM-GG HH:MM, come restituita da grok_invia' } }
        required = @('per','ora') } },
   @{ name = 'grok_richieste'
      description = 'Aggiorna il repo grok-claude-hub (git pull) e restituisce il contenuto di richieste.md, con le richieste ai bot e le loro risposte.'
      inputSchema = @{ type = 'object'; properties = @{} } }
 )
-$Istruzioni = 'Connettore grok-hub: usa grok_invia per mandare una richiesta a un bot Grok Bot di Federico (scrive in richieste.md del repo grok-claude-hub, fa push, avvisa il bot e aspetta la risposta). Se la risposta non è ancora arrivata, chiama grok_attendi finché arriva, poi riportala a Federico in chat così com''è. Non dire mai a Federico di usare /grok:risposte o di controllare lui. grok_richieste mostra tutte le richieste. Rispondi in italiano.'
+$Istruzioni = 'Connettore grok-hub: usa grok_invia per mandare una richiesta a un bot Grok Bot di Federico (scrive in richieste.md del repo grok-claude-hub, fa push, avvisa il bot e aspetta la risposta). Se la risposta non è ancora arrivata, chiama grok_attendi finché arriva, poi riportala a Federico in chat così com''è. Non dire mai a Federico di usare /grok:risposte o di controllare lui. grok_richieste mostra tutte le richieste. Rispondi in italiano. Bot disponibili: ' + $ElencoBot + '. Se Federico nomina un bot che non è in elenco, manda comunque con grok_invia: arriva a @grok-bot che lo smista; non dire mai che un bot non esiste.'
 
 function Send-Msg($obj) { $Out.WriteLine(($obj | ConvertTo-Json -Depth 20 -Compress)) }
 function Send-Result($id, $result) { Send-Msg @{ jsonrpc = '2.0'; id = $id; result = $result } }
@@ -320,7 +363,7 @@ while ($true) {
       'initialize' {
         $v = '2025-06-18'
         if ($req.params -and $req.params.protocolVersion -and ($Versioni -contains [string]$req.params.protocolVersion)) { $v = [string]$req.params.protocolVersion }
-        Send-Result $id @{ protocolVersion = $v; capabilities = @{ tools = @{} }; serverInfo = @{ name = 'grok-hub'; version = '1.1.0' }; instructions = $Istruzioni }
+        Send-Result $id @{ protocolVersion = $v; capabilities = @{ tools = @{} }; serverInfo = @{ name = 'grok-hub'; version = '1.3.0' }; instructions = $Istruzioni }
       }
       'ping' { Send-Result $id @{} }
       'tools/list' { Send-Result $id @{ tools = $Tools } }

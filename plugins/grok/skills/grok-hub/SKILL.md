@@ -1,6 +1,6 @@
 ---
 name: grok-hub
-description: Manda richieste ai bot Grok Bot di Federico (@grok-bot, @piano-rilancio, @network, @ricercatore, @copywriter, @marketer, @developer, @home-assistant, @vendite-usato, @nutrizionista) o mostra le loro risposte in richieste.md del repo grok-claude-hub. Usala quando Federico usa un comando /grok:… o chiede di "chiedere al bot X" o di vedere le risposte dei bot.
+description: Manda richieste ai bot Grok Bot di Federico (@grok-bot, @raimondo (Il Piccolo Raimondo Vianello), @piano-rilancio, @network, @ricercatore, @copywriter, @marketer, @developer, @home-assistant, @vendite-usato, @nutrizionista, @competitor-watch, @caso-carplay, @projects-manager) o mostra le loro risposte in richieste.md del repo grok-claude-hub. Usala quando Federico usa un comando /grok:… o chiede di "chiedere al bot X" o di vedere le risposte dei bot.
 ---
 
 Rispondi a Federico in italiano, in poche righe. Le regole del file `richieste.md` sono in `HANDOFF.md` del repo grok-claude-hub.
@@ -11,7 +11,7 @@ Il lavoro lo fa il connettore locale **grok-hub** di questo plugin, che gira sul
 
 1. Se Federico non ha scritto la richiesta, chiedigliela in una riga.
 2. Chiama lo strumento `grok_invia` del connettore grok-hub con:
-   - `per`: il bot (per esempio `@network`);
+   - `per`: il bot (per esempio `@network`). Elenco completo e id in `HANDOFF.md`; "raimondo" o "il piccolo raimondo vianello" = `@raimondo`. Se Federico nomina un bot che non conosci, **non rifiutare e non dire che non esiste**: passa il nome così com'è in `per`, il connettore lo manda a `@grok-bot` che lo smista;
    - `testo`: la richiesta così come l'ha scritta Federico (non riassumerla, non aggiungere password, token o dati sanitari);
    - `file`: solo se la richiesta cita un file del repo, il suo percorso;
    - `argomento`: 3-6 parole per il messaggio di commit.
