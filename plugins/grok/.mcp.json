@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "grok-hub": {
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${CLAUDE_PLUGIN_ROOT}/mcp/grok-hub.ps1"
+      ]
+    }
+  }
+}
