@@ -1,12 +1,15 @@
 {
   "name": "grok-plugin",
-  "owner": { "name": "Federico Morello" },
+  "owner": {
+    "name": "Federico Morello"
+  },
   "description": "Plugin del repo grok-claude-hub: comandi per chiamare i bot Grok Bot di Federico da Claude Cowork e Claude Code.",
   "plugins": [
     {
       "name": "grok",
       "source": "./plugins/grok",
-      "description": "Comandi /grok:<bot> per chiamare i bot Grok Bot da Claude Cowork e Claude Code."
+      "description": "Comandi /grok:<bot> per chiamare i bot Grok Bot da Claude Cowork e Claude Code.",
+      "version": "1.3.1"
     }
   ]
 }

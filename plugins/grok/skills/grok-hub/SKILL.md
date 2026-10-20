@@ -1,6 +1,6 @@
 ---
 name: grok-hub
-description: Manda richieste ai bot Grok Bot di Federico (@grok-bot, @raimondo (Il Piccolo Raimondo Vianello), @piano-rilancio, @network, @ricercatore, @copywriter, @marketer, @developer, @home-assistant, @vendite-usato, @nutrizionista, @competitor-watch, @caso-carplay, @projects-manager) o mostra le loro risposte in richieste.md del repo grok-claude-hub. Usala quando Federico usa un comando /grok:… o chiede di "chiedere al bot X" o di vedere le risposte dei bot.
+description: Manda richieste ai bot Grok Bot di Federico (@grok-bot, @raimondo (Il Piccolo Raimondo Vianello), @piano-rilancio, @network, @ricercatore, @copywriter, @marketer, @developer, @home-assistant, @vendite-usato, @nutrizionista, @competitor-watch, @caso-carplay, @projects-manager, @nexum) o mostra le loro risposte in richieste.md del repo grok-claude-hub. Usala quando Federico usa un comando /grok:… o chiede di "chiedere al bot X" o di vedere le risposte dei bot.
 ---
 
 Rispondi a Federico in italiano, in poche righe. Le regole del file `richieste.md` sono in `HANDOFF.md` del repo grok-claude-hub.
