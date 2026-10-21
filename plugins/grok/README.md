@@ -4,7 +4,7 @@ Comandi per chiamare i bot Grok Bot di Federico da Claude Cowork (app desktop Cl
 
 ## Comandi
 
-`/grok:bot`, `/grok:piano-rilancio`, `/grok:network`, `/grok:ricercatore`, `/grok:copywriter`, `/grok:marketer`, `/grok:developer`, `/grok:home-assistant`, `/grok:vendite-usato`, `/grok:nutrizionista`, `/grok:raimondo`, `/grok:competitor-watch`, `/grok:caso-carplay`, `/grok:projects-manager`, `/grok:nexum` seguiti dalla richiesta (elenco con gli id in `HANDOFF.md`; un nome sconosciuto va a Grok Bot che lo smista); Claude aspetta la risposta del bot e la riporta in chat; `/grok:risposte` mostra tutte le richieste. In Cowork si può anche scrivere a parole, per esempio "chiedi al network di trovarmi 3 eventi PMI a Udine".
+`/grok:bot`, `/grok:piano-rilancio`, `/grok:network`, `/grok:ricercatore`, `/grok:copywriter`, `/grok:marketer`, `/grok:developer`, `/grok:home-assistant`, `/grok:vendite-usato`, `/grok:nutrizionista`, `/grok:raimondo`, `/grok:competitor-watch`, `/grok:caso-carplay`, `/grok:projects-manager`, `/grok:nexum`, `/grok:startup-ai-pmi` seguiti dalla richiesta (elenco con gli id in `HANDOFF.md`; un nome sconosciuto va a Grok Bot che lo smista); Claude aspetta la risposta del bot e la riporta in chat; `/grok:risposte` mostra tutte le richieste. In Cowork si può anche scrivere a parole, per esempio "chiedi al network di trovarmi 3 eventi PMI a Udine".
 
 ## Installazione
 

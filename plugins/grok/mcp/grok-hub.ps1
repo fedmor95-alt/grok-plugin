@@ -43,6 +43,7 @@ $BotInfo = [ordered]@{
   '@projects-manager' = 'Projects Manager (b591164b-0284-4c17-9b3b-0c87af2e4dec)'
   '@marketer'         = 'Marketer (c61d6edf-419d-4e55-92be-c24f041bbd66)'
   '@nexum'            = 'Nexum (3ad7a864-a380-4bd8-b22a-f01a759bf833)'
+  '@startup-ai-pmi'   = 'Startup AI per PMI (28b0b0ad-ec2b-4ba3-91b0-a96dcc65c2aa)'
   '@piano-rilancio'   = 'Piano rilancio (e8c08ae2-054f-49e1-979a-6ba817d0c2a0)'
 }
 $Bots = @($BotInfo.Keys)
@@ -56,6 +57,7 @@ $Alias = @{
   'caso carplay' = '@caso-carplay'; 'carplay' = '@caso-carplay'
   'projects manager' = '@projects-manager'; 'project manager' = '@projects-manager'
   'nexum' = '@nexum'
+  'startup ai per pmi' = '@startup-ai-pmi'; 'startup ai' = '@startup-ai-pmi'; 'startup-ai-pmi' = '@startup-ai-pmi'
   'piano rilancio' = '@piano-rilancio'; 'rilancio' = '@piano-rilancio'
 }
 $ElencoBot = ($BotInfo.GetEnumerator() | ForEach-Object { "$($_.Key) = $($_.Value)" }) -join '; '
@@ -365,7 +367,7 @@ while ($true) {
       'initialize' {
         $v = '2025-06-18'
         if ($req.params -and $req.params.protocolVersion -and ($Versioni -contains [string]$req.params.protocolVersion)) { $v = [string]$req.params.protocolVersion }
-        Send-Result $id @{ protocolVersion = $v; capabilities = @{ tools = @{} }; serverInfo = @{ name = 'grok-hub'; version = '1.3.1' }; instructions = $Istruzioni }
+        Send-Result $id @{ protocolVersion = $v; capabilities = @{ tools = @{} }; serverInfo = @{ name = 'grok-hub'; version = '1.3.2' }; instructions = $Istruzioni }
       }
       'ping' { Send-Result $id @{} }
       'tools/list' { Send-Result $id @{ tools = $Tools } }
